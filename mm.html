@@ -503,6 +503,7 @@
             "Custom tailored charcoal suit (no tie, rolled cuffs)", "Worn biker leather jacket over a vintage Henley", 
             "Oversized heavyweight designer hoodie", "Crisp white unbuttoned dress shirt"
         ],
+        swords: ["Sheathed", "Unsheathed"],
         toolLengths: ["6\"", "6.5\"", "7\"", "7.5\"", "8\"", "8.5\"", "9\"", "9.5\""],
         toolGirths: ["Precision-grip", "Heavy-duty", "Two-handed hilt", "Toolbox-bursting", "Crowbar-thick", "Wrist-thick", "Grip-defying circumference"],
         hobbies: [
@@ -681,6 +682,7 @@
             belly: randomItem(data.bellySizes),
             neckline: neckline,
             style: randomItem(data.styles),
+            sword: randomItem(data.swords),
             toolLength: randomItem(data.toolLengths),
             toolGirth: randomItem(data.toolGirths),
             cream: randomItem(data.creams),
@@ -748,7 +750,8 @@
         `;
 
         document.getElementById('p-tool').innerHTML = `
-            Packing a ${profile.toolLength} long, ${profile.toolGirth.toLowerCase()} lucky screwdriver.
+            Packing a ${profile.toolLength} long, ${profile.toolGirth.toLowerCase()} lucky screwdriver.<br>
+            <strong>Sword:</strong> ${profile.sword}.
         `;
 
         const likeBtn = document.getElementById('like-btn');
