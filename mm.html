@@ -1,205 +1,812 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Match</title>
-<style>
-:root{
-  --bg:#0e0f13;--surface:#17191f;--surface2:#20232b;--text:#f7f7f8;--muted:#a7aab3;
-  --accent:#e94057;--accent2:#ff6b6b;--line:#30333d;--green:#43d17a;
-}
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-body{background:radial-gradient(circle at 50% -20%,#34212a 0,#14151a 32%,var(--bg) 65%);color:var(--text);min-height:100vh;padding:14px}
-.app{width:100%;max-width:430px;margin:auto}
-.topbar{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 5px}
-.brand{font-size:1.45rem;font-weight:900;letter-spacing:-.5px}.brand span{color:var(--accent)}
-.icon-btn{width:40px;height:40px;border:1px solid var(--line);background:var(--surface);color:#fff;border-radius:50%;font-size:1.1rem}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45)}
-.photo{height:455px;position:relative;overflow:hidden;background:linear-gradient(145deg,#31343e,#17191f)}
-.photo svg{position:absolute;inset:42px 0 0;width:100%;height:100%}
-.photo:after{content:"";position:absolute;left:0;right:0;bottom:0;height:48%;background:linear-gradient(transparent,rgba(0,0,0,.88))}
-.status{position:absolute;top:18px;left:18px;background:rgba(15,16,20,.72);backdrop-filter:blur(8px);padding:7px 11px;border-radius:20px;font-size:.78rem;z-index:3}
-.status:before{content:"";display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px}
-.quote{position:absolute;left:22px;right:22px;bottom:76px;z-index:3;font-family:Georgia,serif;font-style:italic;font-size:1.02rem;text-shadow:0 2px 5px #000}
-.hero-name{position:absolute;z-index:3;left:22px;bottom:22px;font-size:2rem;font-weight:800}
-.verified{font-size:.9rem;background:#3787ff;border-radius:50%;padding:1px 5px;vertical-align:5px}
-.details{padding:20px}
-.meta{color:var(--muted);font-size:.93rem;margin-bottom:16px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.chip{padding:7px 11px;border:1px solid var(--line);border-radius:18px;background:var(--surface2);font-size:.82rem}
-.section{padding:17px 0;border-top:1px solid var(--line)}
-.section h3{font-size:.77rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
-.section p{color:#c5c7ce;line-height:1.55;font-size:.96rem}.section strong{color:#fff}
-.actions{display:grid;grid-template-columns:58px 1fr 58px;gap:12px;padding:15px 2px}
-.btn{border:0;cursor:pointer;height:56px;border-radius:50%;font-size:1.35rem;font-weight:800;transition:.15s}
-.btn:active{transform:scale(.93)}
-.nope{background:#24262d;color:#9fa3ad;border:1px solid var(--line)}
-.next{border-radius:28px;background:linear-gradient(90deg,#d92f49,var(--accent2));color:#fff;font-size:1rem;letter-spacing:.5px;box-shadow:0 7px 22px rgba(233,64,87,.3)}
-.like{background:#251d22;color:#ff6578;border:1px solid #63313b}
-.matches{display:none;margin:8px 0 30px}.matches h2{font-size:1rem;margin:8px 4px 12px}
-.match-list{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}.match-list::-webkit-scrollbar{display:none}
-.match{min-width:122px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.match-avatar{height:105px;background:#24262d;overflow:hidden}.match-avatar svg{width:100%;height:100%}
-.match-copy{padding:9px}.match-copy b{font-size:.9rem}.match-copy small{display:block;color:var(--muted);margin-top:3px}
-.toast{position:fixed;top:20px;left:50%;transform:translate(-50%,-20px);background:#fff;color:#111;padding:10px 16px;border-radius:20px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:20}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:380px){.photo{height:410px}.hero-name{font-size:1.75rem}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sizzlr | Smut Match</title>
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --card-bg: #161922;
+            --card-inner: #1e2230;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #ff3366;
+            --primary-gradient: linear-gradient(135deg, #ff3366 0%, #ff6b3d 100%);
+            --like-color: #00e676;
+            --pass-color: #ff5252;
+            --super-color: #2979ff;
+            --border-color: #272d3d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px 12px;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Top Dating App Nav */
+        .app-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1.45rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 12px;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* Card Container */
+        .card {
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+            overflow-y: auto;
+            max-height: 74vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            scrollbar-width: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .card::-webkit-scrollbar { display: none; }
+
+        /* Photo Area */
+        .avatar-container {
+            width: 100%;
+            height: 380px;
+            background: radial-gradient(circle at 50% 30%, #2a2f42 0%, #11131a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* Dating App Stories/Pagination Bars */
+        .story-bars {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            gap: 5px;
+            z-index: 20;
+        }
+
+        .story-bar {
+            height: 3px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 2px;
+        }
+
+        .story-bar.active {
+            background: #ffffff;
+        }
+
+        .match-badge {
+            position: absolute;
+            top: 24px;
+            left: 14px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #00e676;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(0, 230, 118, 0.4);
+            z-index: 10;
+        }
+
+        .quote-overlay {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            right: 14px;
+            text-align: center;
+            font-style: italic;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            font-size: 1.05rem;
+            font-family: Georgia, serif;
+            z-index: 10;
+            line-height: 1.35;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: #2979ff;
+            color: white;
+            border-radius: 50%;
+            font-size: 11px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Profile Details */
+        .profile-details {
+            padding: 20px 18px 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .name-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .name-age {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .location {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .tag {
+            background: var(--card-inner);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
+
+        .prompt-card {
+            background: var(--card-inner);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .prompt-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            color: #ff6b81;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .prompt-text {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .prompt-text strong {
+            color: var(--text-light);
+        }
+
+        /* Tinder-style Round Floating Action Bar */
+        .action-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            padding: 4px 0 10px;
+        }
+
+        .btn-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid;
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+
+        .btn-circle:active {
+            transform: scale(0.9);
+        }
+
+        .btn-pass {
+            border-color: var(--pass-color);
+            color: var(--pass-color);
+        }
+
+        .btn-pass:hover {
+            background: rgba(255, 82, 82, 0.12);
+        }
+
+        .btn-favorite {
+            width: 70px;
+            height: 70px;
+            font-size: 1.9rem;
+            border: none;
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.45);
+        }
+
+        .btn-favorite:hover {
+            filter: brightness(1.15);
+        }
+
+        .btn-super {
+            border-color: var(--super-color);
+            color: var(--super-color);
+        }
+
+        .btn-super:hover {
+            background: rgba(41, 121, 255, 0.12);
+        }
+
+        /* Saved Matches Accordion / Drawer */
+        .saved-section {
+            margin-top: 10px;
+            width: 100%;
+            display: none;
+        }
+
+        .saved-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .saved-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .saved-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .saved-avatar {
+            width: 52px;
+            height: 52px;
+            background: #111;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid var(--primary);
+        }
+
+        .saved-info h4 {
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .saved-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+    </style>
 </head>
 <body>
-<div class="toast" id="toast">It's a match-ish.</div>
-<div class="app">
-  <div class="topbar">
-    <button class="icon-btn" aria-label="Profile">☰</button>
-    <div class="brand">modern<span>match</span></div>
-    <button class="icon-btn" aria-label="Messages">♡</button>
-  </div>
 
-  <article class="card">
-    <div class="photo" id="avatar">
-      <div class="status">Recently active</div>
-      <div class="quote" id="quote"></div>
-      <div class="hero-name"><span id="name"></span>, <span id="age"></span> <span class="verified">✓</span></div>
+<div class="phone-frame">
+    <!-- App Navigation Bar -->
+    <div class="app-nav">
+        <div class="nav-logo">
+            <span>🔥</span> Sizzlr
+        </div>
+        <div class="nav-icons">
+            <span>💬</span>
+            <span>⚙️</span>
+        </div>
     </div>
-    <div class="details">
-      <div class="meta">📍 <span id="origin"></span> · <span id="distance"></span> miles away</div>
-      <div class="chips" id="chips"></div>
 
-      <section class="section"><h3>About me</h3><p id="vibe"></p></section>
-      <section class="section"><h3>The Look</h3><p id="physical"></p></section>
-      <section class="section"><h3>Compatibility Research</h3><p id="scene"></p></section>
-      <section class="section"><h3>Equipment</h3><p id="tool"></p></section>
+    <!-- Active Card -->
+    <div class="card" id="profile-card">
+        <div class="avatar-container" id="avatar-render"></div>
+        <div class="profile-details">
+            <div>
+                <div class="name-row">
+                    <div class="name-age">
+                        <span id="p-name">Loading...</span>, <span id="p-age">30</span>
+                        <span class="verified-badge">✓</span>
+                    </div>
+                </div>
+                <div class="location">📍 <span id="p-origin">New York City, NY</span> • <span id="p-distance">2 miles away</span></div>
+            </div>
+
+            <div class="tags-container" id="p-tags"></div>
+
+            <div class="prompt-card">
+                <div class="prompt-title">The Romantic Dynamic & Vibe</div>
+                <div class="prompt-text" id="p-vibe"></div>
+            </div>
+
+            <div class="prompt-card">
+                <div class="prompt-title">Physical Build & Features</div>
+                <div class="prompt-text" id="p-physical"></div>
+            </div>
+
+            <div class="prompt-card">
+                <div class="prompt-title">Behind Closed Doors Specs</div>
+                <div class="prompt-text" id="p-scene"></div>
+            </div>
+
+            <div class="prompt-card">
+                <div class="prompt-title">Signature Equipment</div>
+                <div class="prompt-text" id="p-tool"></div>
+            </div>
+        </div>
     </div>
-  </article>
 
-  <div class="actions">
-    <button class="btn nope" onclick="generateProfile()" aria-label="Pass">✕</button>
-    <button class="btn next" onclick="generateProfile()">Discover Next</button>
-    <button class="btn like" onclick="saveProfile()" aria-label="Favorite">♥</button>
-  </div>
+    <!-- Dating App Swipe Actions -->
+    <div class="action-container">
+        <button class="btn-circle btn-pass" title="Pass / Next" onclick="generateProfile()">✖</button>
+        <button class="btn-circle btn-favorite" id="like-btn" title="Match & Favorite" onclick="saveProfile()">❤️</button>
+        <button class="btn-circle btn-super" title="Super Like" onclick="superLike()">⭐</button>
+    </div>
 
-  <section class="matches" id="matches"><h2>Your questionable life choices</h2><div class="match-list" id="match-list"></div></section>
+    <!-- Match Drawer -->
+    <div class="saved-section" id="saved-section">
+        <div class="saved-title">
+            <span>Your Matches</span>
+            <span id="saved-count">0</span>
+        </div>
+        <div class="saved-list" id="saved-list"></div>
+    </div>
 </div>
 
 <script>
-const data={
-names:["Cassian","Rhys","Rowan","Lorcan","Xaden","Liam","Azriel","Hunt","Aidas","Darius","Fenrys","Nyk","Cas","Bastian","Evander","Ronan","Lucien","Kieran","Declan","Silas","Soren","Damon","Rafe","Gideon","Knox","Callum","Maddox","Theo","Nico","Roman","Beckett","Atlas","Jasper","Killian","Cade","Zane","Wes","Finn","Leander","Tristan","Malachi","Remy","Adrian","Griffin"],
-quotes:["\"Who did this to you?\"","\"I would burn this city to the ground for you.\"","\"You're going to be the ruin of me.\"","\"Touch her and you die.\"","\"Kneel.\"","\"I've been waiting a long time for someone like you.\"","\"I'm not a good man, but I'm yours.\"","\"I canceled my plans. You are the plans.\"","\"I cook, I clean, I brood near windows.\"","\"My red flag is thinking I can fix your red flags.\"","\"Tell me what you need. Then tell me again slower.\"","\"I have exactly two moods: protective and hungry.\""],
-haircuts:["Shoulder-length waves","Undercut with messy top","Strict military buzz","Swept-back taper","Man-bun with loose strands","Shaggy wolf cut","Textured crop","Long windswept layers","Messy curls","Close fade","Slicked-back undercut","Tousled medium cut"],
-hairColors:[["Midnight Black","#090909"],["Silver-blonde","#e8eaf6"],["Ash Blonde","#c2b280"],["Dark Copper","#7a3024"],["Dark Ash Brown","#3b2f2f"],["Raven Blue","#101421"],["Chestnut","#5b3427"],["Golden Brown","#765331"]],
-skinTones:[["Pale ivory","#f3e5db"],["Fair alabaster","#f4cbb8"],["Sun-kissed olive","#c29b76"],["Warm bronze","#a66a41"],["Rich mahogany","#6b3a24"],["Deep espresso","#3a2118"]],
-origins:["New York City, NY","Chicago, IL","London, UK","Seattle, WA","Los Angeles, CA","Edinburgh, Scotland","Dublin, Ireland","Miami, FL","Boston, MA","Austin, TX","Denver, CO","Nashville, TN","Portland, OR","San Diego, CA","Toronto, Canada","Vancouver, Canada","Savannah, GA","New Orleans, LA"],
-meetLocations:["at a conference","at the bar","at the club","at the park","at a work event","at the grocery store","in a suspiciously cinematic elevator","at a bookstore","at the gym","at an airport gate","during a coffee order mix-up","at trivia night","while both reaching for the same avocado"],
-heights:["5'10\"","5'11\"","6'0\"","6'1\"","6'2\"","6'3\"","6'4\"","6'5\"","6'6\"","6'8\""],
-muscularity:["Lean and corded","Built like a brick wall","Heavyweight-thick","Sculpted athlete","Broad-shouldered brawler","Swimmer build","Powerlifter-built","Rugby-forward sturdy"],
-bellies:["V-taper lean","rugged lumberjack core","powerlifter thick","washboard abs","soft bulk-season midsection","abs that appear to have legal representation"],
-necklines:["Turtleneck","Crewneck"],
-styles:["Black tactical wear","Fitted dark tee stretching across his chest","Tailored charcoal suit, no tie","Heavy leather jacket over a ripped Henley","Oversized black hoodie hiding his mass","Rolled-sleeve button-down","Flannel and boots","Monochrome gym clothes","Suspiciously expensive casualwear"],
-facialHair:[
- {name:"Clean shaven",type:"none"},
- {name:"Five-o'clock shadow",type:"shadow"},
- {name:"Designer stubble",type:"stubble"},
- {name:"Short boxed beard",type:"short"},
- {name:"Full beard",type:"full"},
- {name:"Goatee",type:"goatee"},
- {name:"Mustache",type:"mustache"},
- {name:"Mustache + stubble",type:"mustacheStubble"}
-],
-toolLengths:["5\"","6\"","6.5\"","7\"","7.5\"","8\"","8.5\"","9\""],
-toolGirths:["Precision-grip","Heavy-duty","Two-handed hilt","Toolbox-bursting","Crowbar-thick","Wrist-thick"],
-hobbies:["Woodworking","Underground boxing","Motorcycle restoration","Weightlifting","Collecting expensive whiskey","Wilderness survival","Axe throwing","Reading classic literature","Cooking elaborate breakfasts","Rock climbing","Vinyl collecting","Dog fostering","Blacksmithing","Photography","Kayaking","Camping","Restoring old houses","Playing guitar badly but confidently","Coffee roasting","Competitive trivia","Gardening","Muay Thai","Sailing","Astronomy","Baking bread","Hiking","Chess","Pottery","Learning languages","Home theater tinkering","Running","Fishing","Comic collecting","Making absurdly good tacos"],
-occupations:["Private Security Contractor","Tech CEO","Head Bouncer","Master Mechanic","Architect","Nightclub Owner","Ex-Military Consultant","Firefighter","ER Nurse","Pilot","Chef","Physical Therapist","Detective","Professor","Software Engineer","Paramedic","Tattoo Artist","Carpenter","Attorney","Veterinarian","Personal Trainer","Brewery Owner"],
-hangouts:["A hidden downtown speakeasy","His high-rise penthouse","The underground boxing gym","A smoky whiskey bar","His messy garage","A quiet coffee shop corner","A neighborhood taco joint","A climbing gym","An independent bookstore","A dog park","A rooftop bar","A record shop","A cabin with suspiciously good Wi-Fi","The gym at an unreasonable hour"],
-staminas:[
-"Houseplant tier: thriving, but not from cardio",
-"Couch potato: strategic recovery is part of the program",
-"Sunday stroller: reliable, unhurried, snack-motivated",
-"Weekend warrior: respectable effort with hydration breaks",
-"Golden retriever energy: enthusiastic and inexplicably still awake",
-"Spin-class survivor: trained by fluorescent lighting and vengeance",
-"Half-marathon menace: annoyingly well-conditioned",
-"Marathon engine: apparently powered by carbohydrates and spite",
-"Triathlon mode: has three sports too many",
-"Elite endurance: cardio has become a personality trait",
-"Border collie setting: somebody hide the tennis ball",
-"Perpetual-motion anomaly: scientists have stopped returning calls"
-],
-behaviors:["Dominant and commanding","Fiercely protective","Grumpy but unexpectedly gentle","Smirking, teasing, and arrogant","Utterly devoted worshipper","Cold to everyone else, golden retriever to you","Quietly confident","Dry-humored and observant","Chaotic flirt with excellent follow-through","Soft-spoken until somebody touches his fries"],
-directions:["from the back","on top","on bottom","standing"],
-creams:["In a pie","On a cake","On some melons","Straight into the mouth","In a protective case"],
-frosting:["0.5 cups","1 cup","1.5 cups","2 cups","3 cups","4 cups"],
-perks:["Magic fingers","Pierced tongue","Calloused hands","Veiny forearms","Bulging biceps","Steel triceps","Iron glutes","Pillar-like quads","Dangerous dimples","Ridiculous shoulders","Forearm tattoo","Voice like late-night radio","Excellent hair","Unfair jawline"]
-};
+    const data = {
+        names: [
+            "Cassian", "Rhys", "Rowan", "Lorcan", "Xaden", "Liam", "Azriel", "Hunt", 
+            "Aidas", "Darius", "Fenrys", "Nyk", "Cas", "Kallias", "Tamlin", "Lucien", 
+            "Gideon", "Malakai", "Dante", "Bastian", "Vaughn", "Declan", "Soren", 
+            "Kieran", "Caelen", "Julian", "Ronan", "Torin", "Zephyr", "Damian"
+        ],
+        quotes: [
+            "\"Who did this to you?\"",
+            "\"I would burn this city to the ground for you.\"",
+            "\"You're going to be the ruin of me.\"",
+            "\"Touch her and you die.\"",
+            "\"Kneel.\"",
+            "\"I've been waiting a long time for someone like you.\"",
+            "\"I'm not a good man, but I'm yours.\"",
+            "\"Tell me to stop, or don't complain about what happens next.\"",
+            "\"You look entirely too good wearing my jacket.\"",
+            "\"Look at me. Only at me.\""
+        ],
+        facialHairTypes: [
+            "Clean-shaven & razor-sharp jaw",
+            "Heavy 5 o'clock shadow",
+            "Rough stubble beard",
+            "Trimmed lumberjack beard",
+            "Chiseled goatee",
+            "Rugged mustache with scruff"
+        ],
+        haircuts: [
+            "Shoulder-length waves", "Undercut with messy top", "Strict military buzz", 
+            "Swept-back taper", "Man-bun with loose strands", "Shaggy wolf cut", 
+            "Curtain bangs framing his cheekbones", "Wild bedhead mane"
+        ],
+        hairColors: [
+            { name: "Midnight Black", hex: "#0a0a10" }, 
+            { name: "Silver-blonde", hex: "#e0e6ed" },
+            { name: "Ash Blonde", hex: "#c4b588" }, 
+            { name: "Dark Copper", hex: "#7a2215" },
+            { name: "Dark Espresso Brown", hex: "#2b1e16" }, 
+            { name: "Raven Blue", hex: "#111728" },
+            { name: "Smoky Charcoal", hex: "#373d47" }
+        ],
+        skinTones: [
+            { name: "Pale ivory", hex: "#f5e6dc" }, 
+            { name: "Fair alabaster", hex: "#fed8c7" },
+            { name: "Sun-kissed olive", hex: "#c69d75" }, 
+            { name: "Warm bronze", hex: "#a4693f" },
+            { name: "Rich mahogany", hex: "#522613" }, 
+            { name: "Deep espresso", hex: "#261309" }
+        ],
+        origins: [
+            "New York City, NY", "Chicago, IL", "London, UK", "Seattle, WA", 
+            "Los Angeles, CA", "Edinburgh, Scotland", "Dublin, Ireland", "Miami, FL", 
+            "Boston, MA", "Montreal, Canada", "Austin, TX", "Denver, CO"
+        ],
+        meetLocations: [
+            "at a stormy rooftop party", "in a dim underground cocktail bar", 
+            "at an upscale gym squat rack", "during an elevator blackout", 
+            "at a bookstore cafe aisle", "striding into a tense board meeting", 
+            "at an impound lot after hours", "in a misty back alley saving your cat"
+        ],
+        heights: ["6'0\"", "6'1\"", "6'2\"", "6'3\"", "6'4\"", "6'5\"", "6'6\"", "6'7\""],
+        muscularity: [
+            "Lean & corded like steel cable", "Built like an absolute brick wall", 
+            "Heavyweight powerlifter mass", "Sculpted Olympic swimmer taper", 
+            "Broad-shouldered bare-knuckle brawler"
+        ],
+        bellySizes: ["V-taper razor abs", "Rugged lumberjack core", "Dense powerlifter midsection", "Deep-cut washboard abs"],
+        necklines: ["Turtleneck", "Crewneck", "Unbuttoned Henley"],
+        styles: [
+            "Black tactical cargo and combat boots", "Fitted jet-black tee clinging to his chest", 
+            "Custom tailored charcoal suit (no tie, rolled cuffs)", "Worn biker leather jacket over a vintage Henley", 
+            "Oversized heavyweight designer hoodie", "Crisp white unbuttoned dress shirt"
+        ],
+        toolLengths: ["6\"", "6.5\"", "7\"", "7.5\"", "8\"", "8.5\"", "9\"", "9.5\""],
+        toolGirths: ["Precision-grip", "Heavy-duty", "Two-handed hilt", "Toolbox-bursting", "Crowbar-thick", "Wrist-thick", "Grip-defying circumference"],
+        hobbies: [
+            "Underground boxing", "Restoring vintage motorcycles", "Drinking rare peated whiskey", 
+            "Blacksmithing custom daggers", "Midnight highway riding", "Reading translated philosophy", 
+            "Axe throwing", "Competitive powerlifting", "Bouldering outdoors", 
+            "Tactical marksmanship", "Playing classical piano in the dark", "Woodworking hand-carved furniture",
+            "Cooking gourmet steaks", "Rescuing retired K9 dogs"
+        ],
+        occupations: [
+            "Private Security Contractor", "Tech Startup Founder", "VIP Head Bouncer", 
+            "Master Custom Mechanic", "High-Rise Architect", "Underworld Speakeasy Owner", 
+            "Ex-Military Tactical Advisor", "Smokejumper Firefighter", "Offshore Salvage Specialist",
+            "Antiquities Smuggler", "MMA Striking Coach"
+        ],
+        hangouts: [
+            "A members-only hidden speakeasy", "His steel-and-glass corner penthouse", 
+            "A grease-scented custom motorcycle garage", "A private rooftop overlooking the skyline", 
+            "The heavy-bag area of a 24-hour dungeon gym", "A secluded cabin in the pine woods"
+        ],
+        staminas: [
+            "Needs a quick hydration break & snack between rounds",
+            "Weekend warrior (consistently solid 45-minute engine)",
+            "High-torque diesel engine (slow build, never stalls)",
+            "Elite ultramarathon endurance (he simply does not tire)",
+            "Olympic gold stamina (multiple breathless overtimes)",
+            "Insatiable stamina (you will tap out first, guaranteed)",
+            "Pure unrelenting caffeine & spite fuel (all night long)"
+        ],
+        behaviors: [
+            "Dominant, possessive, and quietly commanding", 
+            "Fiercely protective with a hair-trigger temper for your enemies", 
+            "Gruff and cynical, but shockingly tender when alone with you", 
+            "Smirking, teasing brat-tamer with steady hands", 
+            "Utterly devoted worshipper who prioritizes your pleasure", 
+            "Cold and unreadable to the public, melted golden retriever behind your door"
+        ],
+        directions: ["from behind holding hips", "deep in missionary", "pinned against the headboard", "standing against the door", "straddling your lap"],
+        creams: ["In a pie", "On a cake", "Drizzled over melons", "Directly into your mouth", "Sealed in a protective case"],
+        frostingAmounts: ["0.75 cups", "1.25 cups", "2 cups", "2.75 cups", "3.5 cups", "4+ cups (flood warning)"],
+        perksPool: [
+            "Magic fingers", "Calloused rough palms", "Pierced tongue", "Veiny roadmapped forearms", 
+            "Broad collarbones", "Grip strength to lift you one-handed", "Chiseled V-line", 
+            "Low gravelly bedroom voice", "Steel-trap jawline", "Pillar-thick thighs"
+        ]
+    };
 
-let current={}; const r=a=>a[Math.floor(Math.random()*a.length)];
-const range=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+    let currentProfile = {};
+    let savedProfiles = [];
 
-function beardSVG(type,color){
- const c=color;
- const parts={
- none:"",
- shadow:`<path d="M70 118 Q75 154 100 158 Q125 154 130 118 Q122 148 100 151 Q78 148 70 118Z" fill="${c}" opacity=".22"/>`,
- stubble:`<path d="M70 116 Q75 155 100 160 Q125 155 130 116 Q123 149 100 154 Q77 149 70 116Z" fill="${c}" opacity=".48"/>`,
- short:`<path d="M68 114 Q70 151 85 163 Q100 174 115 163 Q130 151 132 114 Q125 145 116 154 L100 164 L84 154 Q75 145 68 114Z" fill="${c}"/>`,
- full:`<path d="M66 108 Q67 151 82 169 L100 183 L118 169 Q133 151 134 108 Q128 145 117 158 L100 174 L83 158 Q72 145 66 108Z" fill="${c}"/>`,
- goatee:`<path d="M91 137 Q100 143 109 137 L108 158 L100 168 L92 158Z" fill="${c}"/><path d="M86 128 Q100 121 114 128 Q104 132 100 132 Q96 132 86 128Z" fill="${c}"/>`,
- mustache:`<path d="M82 126 Q91 118 100 125 Q109 118 118 126 Q110 132 100 129 Q90 132 82 126Z" fill="${c}"/>`,
- mustacheStubble:`<path d="M70 116 Q75 155 100 160 Q125 155 130 116 Q123 149 100 154 Q77 149 70 116Z" fill="${c}" opacity=".35"/><path d="M82 126 Q91 118 100 125 Q109 118 118 126 Q110 132 100 129 Q90 132 82 126Z" fill="${c}"/>`
- }; return parts[type]||"";
-}
-function hairSVG(c,cut){
- if(cut.includes("buzz")||cut.includes("fade")) return `<path d="M59 86 Q62 44 100 42 Q138 44 141 86 Q125 59 100 57 Q75 59 59 86Z" fill="${c}"/>`;
- if(cut.includes("Shoulder")||cut.includes("Long")) return `<path d="M52 95 Q47 40 100 31 Q153 40 148 95 L145 150 L130 136 L134 82 Q118 50 100 52 Q82 50 66 82 L70 136 L55 150Z" fill="${c}"/>`;
- if(cut.includes("Man-bun")) return `<circle cx="100" cy="33" r="18" fill="${c}"/><path d="M54 91 Q53 38 100 38 Q147 38 146 91 Q128 55 100 55 Q72 55 54 91Z" fill="${c}"/>`;
- return `<path d="M53 91 Q50 35 100 36 Q150 35 147 91 Q131 54 103 56 Q77 49 60 82Z" fill="${c}"/><path d="M58 57 Q83 21 130 42 Q107 43 82 70Z" fill="${c}"/>`;
-}
-function makeSVG(p){
- const shirt="#111319", hc=p.hair[1];
- return `<svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
- <path d="M5 250 L25 172 Q45 157 82 157 L118 157 Q155 157 175 172 L195 250Z" fill="${shirt}"/>
- <path d="M82 142 L82 169 Q100 182 118 169 L118 142Z" fill="${p.skin[1]}"/>
- <path d="M65 70 L135 70 L134 119 Q130 143 114 157 L86 157 Q70 143 66 119Z" fill="${p.skin[1]}"/>
- <circle cx="65" cy="111" r="8" fill="${p.skin[1]}"/><circle cx="135" cy="111" r="8" fill="${p.skin[1]}"/>
- <path d="M78 104 Q86 98 94 104" stroke="#292929" stroke-width="2" fill="none"/><path d="M106 104 Q114 98 122 104" stroke="#292929" stroke-width="2" fill="none"/>
- <circle cx="86" cy="108" r="2.5" fill="#202020"/><circle cx="114" cy="108" r="2.5" fill="#202020"/>
- <path d="M100 109 L96 126 Q100 129 104 126" stroke="#9c684f" stroke-width="2" fill="none"/>
- <path d="M90 137 Q100 142 110 137" stroke="#8c514b" stroke-width="2" fill="none"/>
- ${beardSVG(p.facialHair.type,hc)} ${hairSVG(hc,p.haircut)}
- </svg>`;
-}
-function build(){
- let h1=r(data.hobbies),h2=r(data.hobbies);while(h1===h2)h2=r(data.hobbies);
- let pool=[...data.perks], perks=[]; for(let i=0;i<range(1,4);i++) perks.push(pool.splice(range(0,pool.length-1),1)[0]);
- const p={name:r(data.names),age:range(25,50),quote:r(data.quotes),origin:r(data.origins),distance:range(1,42),
- meet:r(data.meetLocations),hair:r(data.hairColors),haircut:r(data.haircuts),skin:r(data.skinTones),height:r(data.heights),
- muscle:r(data.muscularity),belly:r(data.bellies),neckline:r(data.necklines),style:r(data.styles),facialHair:r(data.facialHair),
- toolLength:r(data.toolLengths),toolGirth:r(data.toolGirths),cream:r(data.creams),frosting:r(data.frosting),direction:r(data.directions),
- h1,h2,occupation:r(data.occupations),hangout:r(data.hangouts),stamina:r(data.staminas),performances:range(1,8),
- behavior:r(data.behaviors),perks}; p.svg=makeSVG(p); return p;
-}
-function render(p){
- current=p;
- document.getElementById("name").textContent=p.name; document.getElementById("age").textContent=p.age;
- document.getElementById("quote").textContent=p.quote; document.getElementById("origin").textContent=p.origin;
- document.getElementById("distance").textContent=p.distance;
- document.getElementById("avatar").insertAdjacentHTML("afterbegin",p.svg);
- const av=document.getElementById("avatar"); [...av.querySelectorAll(":scope > svg")].slice(0,-1).forEach(x=>x.remove());
- document.getElementById("chips").innerHTML=`<span class="chip">💼 ${p.occupation}</span><span class="chip">📏 ${p.height}</span><span class="chip">🎯 ${p.h1}</span><span class="chip">🎯 ${p.h2}</span>`;
- document.getElementById("vibe").innerHTML=`<strong>${p.behavior}.</strong> Usually found at ${p.hangout.toLowerCase()}. You will probably meet him ${p.meet}.`;
- document.getElementById("physical").innerHTML=`${p.skin[0]} skin, ${p.hair[0].toLowerCase()} ${p.haircut.toLowerCase()}, and <strong>${p.facialHair.name.toLowerCase()}</strong>. ${p.muscle} with a ${p.belly.toLowerCase()}.<br><strong>Standout perks:</strong> ${p.perks.join(", ")}.`;
- document.getElementById("scene").innerHTML=`<strong>Stamina:</strong> ${p.stamina}<br><strong>Performances per night:</strong> ${p.performances}<br><strong>Favorite direction:</strong> ${p.direction}<br><strong>Cream preference:</strong> ${p.cream} (${p.frosting})`;
- document.getElementById("tool").innerHTML=`Carries a <strong>${p.toolLength} ${p.toolGirth.toLowerCase()}</strong> lucky screwdriver.`;
- window.scrollTo({top:0,behavior:"smooth"});
-}
-function generateProfile(){render(build())}
-function saveProfile(){
- const list=document.getElementById("match-list"),sec=document.getElementById("matches");
- const el=document.createElement("div");el.className="match";
- el.innerHTML=`<div class="match-avatar">${current.svg}</div><div class="match-copy"><b>${current.name}, ${current.age}</b><small>${current.occupation}</small></div>`;
- list.prepend(el);sec.style.display="block"; const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1300);
-}
-window.addEventListener("DOMContentLoaded",generateProfile);
+    function randomItem(arr) { 
+        return arr[Math.floor(Math.random() * arr.length)]; 
+    }
+
+    // SVG Generator with facial hair, hair cuts, and shirt styling
+    function buildAvatarSVG(skinHex, hairHex, beardType, haircut, neckline) {
+        const shirtColor = "#0f121a";
+
+        // Neckline rendering
+        let neckStyleMarkup = `<polygon points="78,140 122,140 100,165" fill="${skinHex}" />`;
+        if (neckline === "Turtleneck") {
+            neckStyleMarkup = `<rect x="76" y="130" width="48" height="35" rx="6" fill="${shirtColor}" stroke="#1f2433" stroke-width="2" />`;
+        } else if (neckline === "Unbuttoned Henley") {
+            neckStyleMarkup = `
+                <polygon points="74,136 126,136 100,185" fill="${skinHex}" />
+                <path d="M 88 150 L 100 185 L 112 150" stroke="#252b3d" stroke-width="2" fill="none" />
+                <circle cx="97" cy="168" r="1.5" fill="#aaa" />
+            `;
+        }
+
+        // Hair Shape
+        let hairMarkup = `
+            <path d="M 52 82 Q 100 15 148 82 Q 152 45 100 35 Q 48 45 52 82 Z" fill="${hairHex}" />
+            <path d="M 48 68 Q 100 -5 152 68 Q 120 22 80 22 Z" fill="${hairHex}" />
+        `;
+        if (haircut.includes("buzz")) {
+            hairMarkup = `<path d="M 60 70 Q 100 30 140 70 Q 100 45 60 70 Z" fill="${hairHex}" opacity="0.9" />`;
+        } else if (haircut.includes("waves") || haircut.includes("mane")) {
+            hairMarkup += `
+                <path d="M 50 80 Q 40 140 60 160 Q 52 120 60 90 Z" fill="${hairHex}" />
+                <path d="M 150 80 Q 160 140 140 160 Q 148 120 140 90 Z" fill="${hairHex}" />
+            `;
+        } else if (haircut.includes("bun")) {
+            hairMarkup += `<ellipse cx="100" cy="22" rx="16" ry="12" fill="${hairHex}" />`;
+        }
+
+        // Facial Hair Options
+        let beardMarkup = "";
+        if (beardType.includes("5 o'clock shadow")) {
+            beardMarkup = `
+                <path d="M 65 110 Q 100 168 135 110 L 130 128 Q 100 168 70 128 Z" fill="${hairHex}" opacity="0.25" />
+                <ellipse cx="100" cy="128" rx="14" ry="4" fill="${hairHex}" opacity="0.2" />
+            `;
+        } else if (beardType.includes("stubble")) {
+            beardMarkup = `
+                <path d="M 64 105 Q 100 172 136 105 L 131 126 Q 100 170 69 126 Z" fill="${hairHex}" opacity="0.45" />
+                <ellipse cx="100" cy="126" rx="16" ry="5" fill="${hairHex}" opacity="0.4" />
+                <line x1="88" y1="138" x2="112" y2="138" stroke="${hairHex}" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+            `;
+        } else if (beardType.includes("lumberjack")) {
+            beardMarkup = `
+                <path d="M 62 105 C 60 160, 75 185, 100 185 C 125 185, 140 160, 138 105 C 130 125, 120 145, 100 145 C 80 145, 70 125, 62 105 Z" fill="${hairHex}" opacity="0.9" />
+                <path d="M 82 124 Q 100 118 118 124 Q 100 132 82 124 Z" fill="${hairHex}" />
+            `;
+        } else if (beardType.includes("goatee")) {
+            beardMarkup = `
+                <path d="M 85 125 Q 100 120 115 125 L 112 155 Q 100 162 88 155 Z" fill="${hairHex}" opacity="0.8" />
+                <circle cx="100" cy="140" r="3" fill="${skinHex}" />
+            `;
+        } else if (beardType.includes("mustache")) {
+            beardMarkup = `
+                <path d="M 78 126 Q 100 114 122 126 Q 100 134 78 126 Z" fill="${hairHex}" opacity="0.85" />
+                <path d="M 65 110 Q 100 165 135 110 L 132 122 Q 100 165 68 122 Z" fill="${hairHex}" opacity="0.18" />
+            `;
+        }
+
+        return `
+        <svg viewBox="0 0 200 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="bodyShade" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#1e2330" />
+                    <stop offset="100%" stop-color="#0a0c12" />
+                </linearGradient>
+            </defs>
+            <!-- Shoulders & Torso -->
+            <path d="M 5 250 L 26 160 L 174 160 L 195 250 Z" fill="url(#bodyShade)" />
+            <!-- Traps / Neck -->
+            <rect x="80" y="125" width="40" height="45" rx="4" fill="${skinHex}" />
+            ${neckStyleMarkup}
+            <!-- Jaw / Head -->
+            <path d="M 64 62 L 136 62 L 136 116 L 116 156 L 84 156 L 64 116 Z" fill="${skinHex}" />
+            <!-- Ears -->
+            <circle cx="62" cy="106" r="7.5" fill="${skinHex}" />
+            <circle cx="138" cy="106" r="7.5" fill="${skinHex}" />
+            <!-- Facial Features (Grounded Brow & Nose) -->
+            <line x1="82" y1="88" x2="94" y2="90" stroke="#000" stroke-width="2.5" opacity="0.45" stroke-linecap="round" />
+            <line x1="118" y1="88" x2="106" y2="90" stroke="#000" stroke-width="2.5" opacity="0.45" stroke-linecap="round" />
+            <path d="M 100 88 L 98 108 L 105 109" stroke="#000" stroke-width="2" opacity="0.25" fill="none" stroke-linecap="round"/>
+            <!-- Facial Hair -->
+            ${beardMarkup}
+            <!-- Hair Cut Layer -->
+            ${hairMarkup}
+        </svg>`;
+    }
+
+    function generateProfileObj() {
+        let h1 = randomItem(data.hobbies);
+        let h2 = randomItem(data.hobbies);
+        while (h1 === h2) h2 = randomItem(data.hobbies);
+
+        let selectedPerks = [];
+        let tempPool = [...data.perksPool];
+        for (let i = 0; i < 3; i++) {
+            selectedPerks.push(tempPool.splice(Math.floor(Math.random() * tempPool.length), 1)[0]);
+        }
+
+        const skin = randomItem(data.skinTones);
+        const hair = randomItem(data.hairColors);
+        const haircut = randomItem(data.haircuts);
+        const beard = randomItem(data.facialHairTypes);
+        const neckline = randomItem(data.necklines);
+
+        return {
+            name: randomItem(data.names),
+            age: Math.floor(Math.random() * 21) + 26, // Ages 26 - 46
+            distance: (Math.random() * 8 + 0.8).toFixed(1),
+            quote: randomItem(data.quotes),
+            origin: randomItem(data.origins),
+            meetLocation: randomItem(data.meetLocations),
+            hair: hair,
+            haircut: haircut,
+            beard: beard,
+            skin: skin,
+            height: randomItem(data.heights),
+            muscle: randomItem(data.muscularity),
+            belly: randomItem(data.bellySizes),
+            neckline: neckline,
+            style: randomItem(data.styles),
+            toolLength: randomItem(data.toolLengths),
+            toolGirth: randomItem(data.toolGirths),
+            cream: randomItem(data.creams),
+            frosting: randomItem(data.frostingAmounts),
+            direction: randomItem(data.directions),
+            h1: h1, 
+            h2: h2,
+            occupation: randomItem(data.occupations),
+            hangout: randomItem(data.hangouts),
+            stamina: randomItem(data.staminas),
+            // Randomized 1-8 performances per night
+            performances: Math.floor(Math.random() * 8) + 1,
+            behavior: randomItem(data.behaviors),
+            perks: selectedPerks,
+            svg: buildAvatarSVG(skin.hex, hair.hex, beard, haircut, neckline)
+        };
+    }
+
+    function renderProfile(profile) {
+        currentProfile = profile;
+
+        document.getElementById('p-name').innerText = profile.name;
+        document.getElementById('p-age').innerText = profile.age;
+        document.getElementById('p-origin').innerText = profile.origin;
+        document.getElementById('p-distance').innerText = `${profile.distance} miles away`;
+
+        document.getElementById('avatar-render').innerHTML = `
+            <div class="story-bars">
+                <div class="story-bar active"></div>
+                <div class="story-bar"></div>
+                <div class="story-bar"></div>
+            </div>
+            <div class="match-badge">98% COMPATIBLE</div>
+            <div class="quote-overlay">${profile.quote}</div>
+            ${profile.svg}
+        `;
+
+        document.getElementById('p-tags').innerHTML = `
+            <div class="tag">💼 ${profile.occupation}</div>
+            <div class="tag">📏 ${profile.height}</div>
+            <div class="tag">🧔 ${profile.beard}</div>
+            <div class="tag">🎯 ${profile.h1}</div>
+            <div class="tag">⚡ ${profile.h2}</div>
+        `;
+
+        document.getElementById('p-vibe').innerHTML = `
+            <strong>Dating Archetype:</strong> ${profile.behavior}.<br>
+            <strong>Wardrobe:</strong> ${profile.style}.<br>
+            <strong>How you two cross paths:</strong> Locked eyes ${profile.meetLocation}.<br>
+            <strong>Off-duty spot:</strong> ${profile.hangout}.
+        `;
+
+        document.getElementById('p-physical').innerHTML = `
+            ${profile.skin.name} complexion with ${profile.hair.name.toLowerCase()} (${profile.haircut.toLowerCase()}).<br>
+            ${profile.beard}.<br>
+            ${profile.muscle}, rocking a ${profile.belly.toLowerCase()}.<br>
+            <strong>Hallmark Features:</strong> ${profile.perks.join(', ')}.
+        `;
+
+        document.getElementById('p-scene').innerHTML = `
+            <strong>Stamina Rating:</strong> ${profile.stamina}<br>
+            <strong>Performances per night:</strong> ${profile.performances} round${profile.performances > 1 ? 's' : ''} guaranteed<br>
+            <strong>Favorite Angle:</strong> Taking you ${profile.direction}<br>
+            <strong>Finishing style:</strong> ${profile.cream} (${profile.frosting} load)
+        `;
+
+        document.getElementById('p-tool').innerHTML = `
+            Packing a ${profile.toolLength} long, ${profile.toolGirth.toLowerCase()} lucky screwdriver.
+        `;
+
+        const likeBtn = document.getElementById('like-btn');
+        likeBtn.innerHTML = "❤️";
+        likeBtn.disabled = false;
+        likeBtn.style.opacity = "1";
+    }
+
+    function generateProfile() {
+        renderProfile(generateProfileObj());
+        const card = document.getElementById('profile-card');
+        card.scrollTop = 0;
+    }
+
+    function saveProfile() {
+        const savedSection = document.getElementById('saved-section');
+        const savedList = document.getElementById('saved-list');
+        const countSpan = document.getElementById('saved-count');
+        const likeBtn = document.getElementById('like-btn');
+
+        savedProfiles.unshift(currentProfile);
+        savedSection.style.display = 'block';
+
+        const card = document.createElement('div');
+        card.className = 'saved-card';
+        card.innerHTML = `
+            <div class="saved-avatar">${currentProfile.svg}</div>
+            <div class="saved-info">
+                <h4>${currentProfile.name}, ${currentProfile.age}</h4>
+                <p>💼 ${currentProfile.occupation} • 📏 ${currentProfile.height}</p>
+                <p>🧔 ${currentProfile.beard}</p>
+            </div>
+        `;
+
+        savedList.prepend(card);
+        countSpan.innerText = savedProfiles.length;
+
+        likeBtn.innerHTML = "🔥";
+        likeBtn.disabled = true;
+        likeBtn.style.opacity = "0.7";
+
+        setTimeout(() => {
+            generateProfile();
+        }, 350);
+    }
+
+    function superLike() {
+        const card = document.getElementById('profile-card');
+        card.style.transition = "transform 0.3s ease";
+        card.style.transform = "scale(1.03) translateY(-10px)";
+        setTimeout(() => {
+            card.style.transform = "none";
+            saveProfile();
+        }, 200);
+    }
+
+    window.onload = generateProfile;
 </script>
+
 </body>
 </html>
