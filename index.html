@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Romantasy Match</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f6;
+            --card-bg: #ffffff;
+            --text-dark: #212121;
+            --text-muted: #757575;
+            --accent: #ff4b4b; /* Tinder-ish pink/red */
+            --accent-hover: #e83e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            max-height: 800px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .card::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .avatar-container {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #ece9e6 0%, #ffffff 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-details {
+            padding: 20px;
+        }
+
+        .name-age {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .location {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .bio-section {
+            margin-bottom: 15px;
+        }
+
+        .bio-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .bio-text {
+            font-size: 1rem;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .action-container {
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #ff6b6b, var(--accent));
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 75, 75, 0.4);
+            transition: transform 0.1s, box-shadow 0.1s;
+            width: 100%;
+        }
+
+        .generate-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 2px 10px rgba(255, 75, 75, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">MateFinder</div>
+    
+    <div class="card" id="profile-card">
+        <div class="avatar-container" id="avatar-render">
+            <!-- SVG injected here -->
+        </div>
+        
+        <div class="profile-details">
+            <div class="name-age"><span id="p-name">Loading...</span>, <span id="p-age">500</span></div>
+            <div class="location">📍 <span id="p-origin">The Night Court</span></div>
+            
+            <div class="tags-container" id="p-tags">
+                <!-- Tags injected here -->
+            </div>
+
+            <div class="bio-section">
+                <div class="bio-title">The Vibe</div>
+                <div class="bio-text" id="p-vibe"></div>
+            </div>
+
+            <div class="bio-section">
+                <div class="bio-title">Physical Stats</div>
+                <div class="bio-text" id="p-physical"></div>
+            </div>
+
+            <div class="bio-section">
+                <div class="bio-title">Acting Scene Specs</div>
+                <div class="bio-text" id="p-scene"></div>
+            </div>
+            
+            <div class="bio-section">
+                <div class="bio-title">Equipment (Lucky Screwdriver)</div>
+                <div class="bio-text" id="p-tool"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-container">
+        <button class="generate-btn" onclick="generateProfile()">Summon Next Match</button>
+    </div>
+</div>
+
+<script>
+    const data = {
+        names: ["Cassian", "Rhysand", "Rowan", "Lorcan", "Xaden", "Liam", "Azriel", "Hunt", "Aidas", "Kingfisher", "Darius", "Fenrys", "Nyktos", "Casteel"],
+        haircuts: ["Shoulder-length waves", "Undercut with messy top", "Strict military buzz", "Swept-back taper", "Man-bun with loose strands", "Shaggy wolf cut"],
+        hairColors: [
+            { name: "Midnight Black", hex: "#111111" },
+            { name: "Silver-white", hex: "#e8eaf6" },
+            { name: "Golden Blonde", hex: "#d4af37" },
+            { name: "Copper Red", hex: "#b83b3b" },
+            { name: "Ash Brown", hex: "#5d4037" },
+            { name: "Raven Blue", hex: "#1a1a2e" }
+        ],
+        skinTones: [
+            { name: "Pale moonlight", hex: "#f8e6e0" },
+            { name: "Fair peachy", hex: "#fcd6c3" },
+            { name: "Sun-kissed tan", hex: "#d4a373" },
+            { name: "Warm bronze", hex: "#bb7b50" },
+            { name: "Rich mahogany", hex: "#633212" },
+            { name: "Deep obsidian", hex: "#3a1f11" }
+        ],
+        ethnicities: [
+            "Illyrian (Guttural purr)", "Valg (Smooth & icy)", "Terrasen (Rolling highlands brogue)", 
+            "Night Court (Deep & velvety)", "Navarrian (Sharp & aristocratic)", "Shadow Realm (Echoing & raspy)"
+        ],
+        heights: ["5'10\"", "6'0\"", "6'2\"", "6'4\"", "6'6\"", "6'8\""],
+        muscularity: ["Lean & corded like a whip", "Built like a brick tavern", "Warrior-thick", "Sculpted like a marble god", "Broad-shouldered brawler"],
+        bellySizes: ["V-taper lean", "Rugged lumberjack core", "Powerlifter thick", "Washboard abs"],
+        styles: ["Worn leathers and sparring wraps", "Sharply tailored dark suits", "Casual Henley stretched over his chest", "Flowing royal tunics", "Usually bare-chested with war paint"],
+        toolLengths: ["5\"", "6\"", "6.5\"", "7\"", "7.5\"", "8\"", "8.5\"", "9\""],
+        toolGirths: ["Precision-grip", "Heavy-duty", "Two-handed hilt", "Toolbox-bursting", "Crowbar-thick", "Wrist-thick"],
+        hobbies: ["Blacksmithing", "Sparring in the ring", "Woodworking", "Tracking through snow", "Drinking at shady taverns", "Reading ancient tomes", "Axe throwing", "Dragon riding"],
+        occupations: ["Shadowsinger", "Warlord", "Royal Guard", "Tavern Bouncer", "Master Assassin", "Wing Leader", "Cursed Prince"],
+        hangouts: ["The local rowdy tavern", "High in the mountain peaks", "The blood-stained training ring", "A darkened library corner", "A hidden speakeasy", "The war tent"],
+        staminas: ["Couch potato (needs a nap after a spar)", "Weekend warrior (good for a standard skirmish)", "Can go all night (and day)", "Fae-level elite endurance"],
+        behaviors: [
+            "\"Kneel for me\" dominant", 
+            "\"Who did this to you?\" violently protective", 
+            "Grumpy but touches you gently", 
+            "Smirking, teasing, and arrogant", 
+            "Utterly devoted worshipper",
+            "Cold outside, golden retriever inside"
+        ],
+        perksPool: ["Magic fingers", "Pierced tongue", "Calloused hands", "Veiny forearms", "Bulging biceps", "Steel triceps", "Iron glutes", "Pillar-like quads"]
+    };
+
+    function randomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateProfile() {
+        const name = randomItem(data.names);
+        const age = Math.floor(Math.random() * 800) + 25; // Romantasy ages
+        const hair = randomItem(data.hairColors);
+        const haircut = randomItem(data.haircuts);
+        const skin = randomItem(data.skinTones);
+        const origin = randomItem(data.ethnicities);
+        const height = randomItem(data.heights);
+        const muscle = randomItem(data.muscularity);
+        const belly = randomItem(data.bellySizes);
+        const style = randomItem(data.styles);
+        
+        // Screwdriver
+        const toolLength = randomItem(data.toolLengths);
+        const toolGirth = randomItem(data.toolGirths);
+        
+        // Hobbies (Pick 2 unique)
+        let h1 = randomItem(data.hobbies);
+        let h2 = randomItem(data.hobbies);
+        while(h1 === h2) h2 = randomItem(data.hobbies);
+        
+        const occupation = randomItem(data.occupations);
+        const hangout = randomItem(data.hangouts);
+        const stamina = randomItem(data.staminas);
+        const performances = Math.floor(Math.random() * 10) + 1;
+        const behavior = randomItem(data.behaviors);
+
+        // Perks (Pick 1 to 3 unique)
+        const perkCount = Math.floor(Math.random() * 3) + 1;
+        let selectedPerks = [];
+        let tempPool = [...data.perksPool];
+        for(let i=0; i<perkCount; i++) {
+            const pIndex = Math.floor(Math.random() * tempPool.length);
+            selectedPerks.push(tempPool.splice(pIndex, 1)[0]);
+        }
+
+        // --- DOM UPDATES ---
+        document.getElementById('p-name').innerText = name;
+        document.getElementById('p-age').innerText = age;
+        document.getElementById('p-origin').innerText = origin;
+
+        // Tags
+        document.getElementById('p-tags').innerHTML = `
+            <div class="tag">💼 ${occupation}</div>
+            <div class="tag">📏 ${height}</div>
+            <div class="tag">🎯 ${h1}</div>
+            <div class="tag">🍻 ${h2}</div>
+        `;
+
+        document.getElementById('p-vibe').innerHTML = `
+            <strong>Attitude:</strong> ${behavior}<br>
+            <strong>Style:</strong> ${style}<br>
+            <strong>Usually found at:</strong> ${hangout}
+        `;
+
+        document.getElementById('p-physical').innerHTML = `
+            ${skin.name} skin, ${hair.name.toLowerCase()} ${haircut.toLowerCase()}.<br>
+            ${muscle} with a ${belly.toLowerCase()}.<br>
+            <strong>Standout Perks:</strong> ${selectedPerks.join(', ')}.
+        `;
+
+        document.getElementById('p-scene').innerHTML = `
+            <strong>Stamina:</strong> ${stamina}<br>
+            <strong>Performances per night:</strong> ${performances}
+        `;
+
+        document.getElementById('p-tool').innerHTML = `
+            Carries a ${toolLength} ${toolGirth.toLowerCase()} lucky screwdriver.
+        `;
+
+        // SVG GENERATION (Simple broad-shouldered bust)
+        const svgHTML = `
+        <svg viewBox="0 0 200 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <!-- Shoulders/Body -->
+            <path d="M 20 250 Q 20 180 100 180 Q 180 180 180 250 Z" fill="#2c3e50" />
+            <!-- Neck -->
+            <rect x="85" y="140" width="30" height="50" fill="${skin.hex}" />
+            <!-- Face/Jaw (Square jaw for manly look) -->
+            <path d="M 70 70 L 130 70 L 130 130 L 115 150 L 85 150 L 70 130 Z" fill="${skin.hex}" />
+            <!-- Ears -->
+            <circle cx="68" cy="110" r="10" fill="${skin.hex}" />
+            <circle cx="132" cy="110" r="10" fill="${skin.hex}" />
+            <!-- Hair Base -->
+            <path d="M 65 90 Q 100 40 135 90 Q 140 60 100 50 Q 60 60 65 90 Z" fill="${hair.hex}" />
+            <!-- Hair Top Volume -->
+            <path d="M 60 80 Q 100 20 140 80 Q 120 40 80 40 Z" fill="${hair.hex}" />
+        </svg>`;
+        
+        document.getElementById('avatar-render').innerHTML = svgHTML;
+    }
+
+    // Generate initial profile on load
+    window.onload = generateProfile;
+</script>
+
+</body>
+</html>
