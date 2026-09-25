@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Match</title>
+<style>
+:root{
+  --bg:#0e0f13;--surface:#17191f;--surface2:#20232b;--text:#f7f7f8;--muted:#a7aab3;
+  --accent:#e94057;--accent2:#ff6b6b;--line:#30333d;--green:#43d17a;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{background:radial-gradient(circle at 50% -20%,#34212a 0,#14151a 32%,var(--bg) 65%);color:var(--text);min-height:100vh;padding:14px}
+.app{width:100%;max-width:430px;margin:auto}
+.topbar{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 5px}
+.brand{font-size:1.45rem;font-weight:900;letter-spacing:-.5px}.brand span{color:var(--accent)}
+.icon-btn{width:40px;height:40px;border:1px solid var(--line);background:var(--surface);color:#fff;border-radius:50%;font-size:1.1rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.photo{height:455px;position:relative;overflow:hidden;background:linear-gradient(145deg,#31343e,#17191f)}
+.photo svg{position:absolute;inset:42px 0 0;width:100%;height:100%}
+.photo:after{content:"";position:absolute;left:0;right:0;bottom:0;height:48%;background:linear-gradient(transparent,rgba(0,0,0,.88))}
+.status{position:absolute;top:18px;left:18px;background:rgba(15,16,20,.72);backdrop-filter:blur(8px);padding:7px 11px;border-radius:20px;font-size:.78rem;z-index:3}
+.status:before{content:"";display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px}
+.quote{position:absolute;left:22px;right:22px;bottom:76px;z-index:3;font-family:Georgia,serif;font-style:italic;font-size:1.02rem;text-shadow:0 2px 5px #000}
+.hero-name{position:absolute;z-index:3;left:22px;bottom:22px;font-size:2rem;font-weight:800}
+.verified{font-size:.9rem;background:#3787ff;border-radius:50%;padding:1px 5px;vertical-align:5px}
+.details{padding:20px}
+.meta{color:var(--muted);font-size:.93rem;margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{padding:7px 11px;border:1px solid var(--line);border-radius:18px;background:var(--surface2);font-size:.82rem}
+.section{padding:17px 0;border-top:1px solid var(--line)}
+.section h3{font-size:.77rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+.section p{color:#c5c7ce;line-height:1.55;font-size:.96rem}.section strong{color:#fff}
+.actions{display:grid;grid-template-columns:58px 1fr 58px;gap:12px;padding:15px 2px}
+.btn{border:0;cursor:pointer;height:56px;border-radius:50%;font-size:1.35rem;font-weight:800;transition:.15s}
+.btn:active{transform:scale(.93)}
+.nope{background:#24262d;color:#9fa3ad;border:1px solid var(--line)}
+.next{border-radius:28px;background:linear-gradient(90deg,#d92f49,var(--accent2));color:#fff;font-size:1rem;letter-spacing:.5px;box-shadow:0 7px 22px rgba(233,64,87,.3)}
+.like{background:#251d22;color:#ff6578;border:1px solid #63313b}
+.matches{display:none;margin:8px 0 30px}.matches h2{font-size:1rem;margin:8px 4px 12px}
+.match-list{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}.match-list::-webkit-scrollbar{display:none}
+.match{min-width:122px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.match-avatar{height:105px;background:#24262d;overflow:hidden}.match-avatar svg{width:100%;height:100%}
+.match-copy{padding:9px}.match-copy b{font-size:.9rem}.match-copy small{display:block;color:var(--muted);margin-top:3px}
+.toast{position:fixed;top:20px;left:50%;transform:translate(-50%,-20px);background:#fff;color:#111;padding:10px 16px;border-radius:20px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:380px){.photo{height:410px}.hero-name{font-size:1.75rem}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast">It's a match-ish.</div>
+<div class="app">
+  <div class="topbar">
+    <button class="icon-btn" aria-label="Profile">☰</button>
+    <div class="brand">modern<span>match</span></div>
+    <button class="icon-btn" aria-label="Messages">♡</button>
+  </div>
+
+  <article class="card">
+    <div class="photo" id="avatar">
+      <div class="status">Recently active</div>
+      <div class="quote" id="quote"></div>
+      <div class="hero-name"><span id="name"></span>, <span id="age"></span> <span class="verified">✓</span></div>
+    </div>
+    <div class="details">
+      <div class="meta">📍 <span id="origin"></span> · <span id="distance"></span> miles away</div>
+      <div class="chips" id="chips"></div>
+
+      <section class="section"><h3>About me</h3><p id="vibe"></p></section>
+      <section class="section"><h3>The Look</h3><p id="physical"></p></section>
+      <section class="section"><h3>Compatibility Research</h3><p id="scene"></p></section>
+      <section class="section"><h3>Equipment</h3><p id="tool"></p></section>
+    </div>
+  </article>
+
+  <div class="actions">
+    <button class="btn nope" onclick="generateProfile()" aria-label="Pass">✕</button>
+    <button class="btn next" onclick="generateProfile()">Discover Next</button>
+    <button class="btn like" onclick="saveProfile()" aria-label="Favorite">♥</button>
+  </div>
+
+  <section class="matches" id="matches"><h2>Your questionable life choices</h2><div class="match-list" id="match-list"></div></section>
+</div>
+
+<script>
+const data={
+names:["Cassian","Rhys","Rowan","Lorcan","Xaden","Liam","Azriel","Hunt","Aidas","Darius","Fenrys","Nyk","Cas","Bastian","Evander","Ronan","Lucien","Kieran","Declan","Silas","Soren","Damon","Rafe","Gideon","Knox","Callum","Maddox","Theo","Nico","Roman","Beckett","Atlas","Jasper","Killian","Cade","Zane","Wes","Finn","Leander","Tristan","Malachi","Remy","Adrian","Griffin"],
+quotes:["\"Who did this to you?\"","\"I would burn this city to the ground for you.\"","\"You're going to be the ruin of me.\"","\"Touch her and you die.\"","\"Kneel.\"","\"I've been waiting a long time for someone like you.\"","\"I'm not a good man, but I'm yours.\"","\"I canceled my plans. You are the plans.\"","\"I cook, I clean, I brood near windows.\"","\"My red flag is thinking I can fix your red flags.\"","\"Tell me what you need. Then tell me again slower.\"","\"I have exactly two moods: protective and hungry.\""],
+haircuts:["Shoulder-length waves","Undercut with messy top","Strict military buzz","Swept-back taper","Man-bun with loose strands","Shaggy wolf cut","Textured crop","Long windswept layers","Messy curls","Close fade","Slicked-back undercut","Tousled medium cut"],
+hairColors:[["Midnight Black","#090909"],["Silver-blonde","#e8eaf6"],["Ash Blonde","#c2b280"],["Dark Copper","#7a3024"],["Dark Ash Brown","#3b2f2f"],["Raven Blue","#101421"],["Chestnut","#5b3427"],["Golden Brown","#765331"]],
+skinTones:[["Pale ivory","#f3e5db"],["Fair alabaster","#f4cbb8"],["Sun-kissed olive","#c29b76"],["Warm bronze","#a66a41"],["Rich mahogany","#6b3a24"],["Deep espresso","#3a2118"]],
+origins:["New York City, NY","Chicago, IL","London, UK","Seattle, WA","Los Angeles, CA","Edinburgh, Scotland","Dublin, Ireland","Miami, FL","Boston, MA","Austin, TX","Denver, CO","Nashville, TN","Portland, OR","San Diego, CA","Toronto, Canada","Vancouver, Canada","Savannah, GA","New Orleans, LA"],
+meetLocations:["at a conference","at the bar","at the club","at the park","at a work event","at the grocery store","in a suspiciously cinematic elevator","at a bookstore","at the gym","at an airport gate","during a coffee order mix-up","at trivia night","while both reaching for the same avocado"],
+heights:["5'10\"","5'11\"","6'0\"","6'1\"","6'2\"","6'3\"","6'4\"","6'5\"","6'6\"","6'8\""],
+muscularity:["Lean and corded","Built like a brick wall","Heavyweight-thick","Sculpted athlete","Broad-shouldered brawler","Swimmer build","Powerlifter-built","Rugby-forward sturdy"],
+bellies:["V-taper lean","rugged lumberjack core","powerlifter thick","washboard abs","soft bulk-season midsection","abs that appear to have legal representation"],
+necklines:["Turtleneck","Crewneck"],
+styles:["Black tactical wear","Fitted dark tee stretching across his chest","Tailored charcoal suit, no tie","Heavy leather jacket over a ripped Henley","Oversized black hoodie hiding his mass","Rolled-sleeve button-down","Flannel and boots","Monochrome gym clothes","Suspiciously expensive casualwear"],
+facialHair:[
+ {name:"Clean shaven",type:"none"},
+ {name:"Five-o'clock shadow",type:"shadow"},
+ {name:"Designer stubble",type:"stubble"},
+ {name:"Short boxed beard",type:"short"},
+ {name:"Full beard",type:"full"},
+ {name:"Goatee",type:"goatee"},
+ {name:"Mustache",type:"mustache"},
+ {name:"Mustache + stubble",type:"mustacheStubble"}
+],
+toolLengths:["5\"","6\"","6.5\"","7\"","7.5\"","8\"","8.5\"","9\""],
+toolGirths:["Precision-grip","Heavy-duty","Two-handed hilt","Toolbox-bursting","Crowbar-thick","Wrist-thick"],
+hobbies:["Woodworking","Underground boxing","Motorcycle restoration","Weightlifting","Collecting expensive whiskey","Wilderness survival","Axe throwing","Reading classic literature","Cooking elaborate breakfasts","Rock climbing","Vinyl collecting","Dog fostering","Blacksmithing","Photography","Kayaking","Camping","Restoring old houses","Playing guitar badly but confidently","Coffee roasting","Competitive trivia","Gardening","Muay Thai","Sailing","Astronomy","Baking bread","Hiking","Chess","Pottery","Learning languages","Home theater tinkering","Running","Fishing","Comic collecting","Making absurdly good tacos"],
+occupations:["Private Security Contractor","Tech CEO","Head Bouncer","Master Mechanic","Architect","Nightclub Owner","Ex-Military Consultant","Firefighter","ER Nurse","Pilot","Chef","Physical Therapist","Detective","Professor","Software Engineer","Paramedic","Tattoo Artist","Carpenter","Attorney","Veterinarian","Personal Trainer","Brewery Owner"],
+hangouts:["A hidden downtown speakeasy","His high-rise penthouse","The underground boxing gym","A smoky whiskey bar","His messy garage","A quiet coffee shop corner","A neighborhood taco joint","A climbing gym","An independent bookstore","A dog park","A rooftop bar","A record shop","A cabin with suspiciously good Wi-Fi","The gym at an unreasonable hour"],
+staminas:[
+"Houseplant tier: thriving, but not from cardio",
+"Couch potato: strategic recovery is part of the program",
+"Sunday stroller: reliable, unhurried, snack-motivated",
+"Weekend warrior: respectable effort with hydration breaks",
+"Golden retriever energy: enthusiastic and inexplicably still awake",
+"Spin-class survivor: trained by fluorescent lighting and vengeance",
+"Half-marathon menace: annoyingly well-conditioned",
+"Marathon engine: apparently powered by carbohydrates and spite",
+"Triathlon mode: has three sports too many",
+"Elite endurance: cardio has become a personality trait",
+"Border collie setting: somebody hide the tennis ball",
+"Perpetual-motion anomaly: scientists have stopped returning calls"
+],
+behaviors:["Dominant and commanding","Fiercely protective","Grumpy but unexpectedly gentle","Smirking, teasing, and arrogant","Utterly devoted worshipper","Cold to everyone else, golden retriever to you","Quietly confident","Dry-humored and observant","Chaotic flirt with excellent follow-through","Soft-spoken until somebody touches his fries"],
+directions:["from the back","on top","on bottom","standing"],
+creams:["In a pie","On a cake","On some melons","Straight into the mouth","In a protective case"],
+frosting:["0.5 cups","1 cup","1.5 cups","2 cups","3 cups","4 cups"],
+perks:["Magic fingers","Pierced tongue","Calloused hands","Veiny forearms","Bulging biceps","Steel triceps","Iron glutes","Pillar-like quads","Dangerous dimples","Ridiculous shoulders","Forearm tattoo","Voice like late-night radio","Excellent hair","Unfair jawline"]
+};
+
+let current={}; const r=a=>a[Math.floor(Math.random()*a.length)];
+const range=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+
+function beardSVG(type,color){
+ const c=color;
+ const parts={
+ none:"",
+ shadow:`<path d="M70 118 Q75 154 100 158 Q125 154 130 118 Q122 148 100 151 Q78 148 70 118Z" fill="${c}" opacity=".22"/>`,
+ stubble:`<path d="M70 116 Q75 155 100 160 Q125 155 130 116 Q123 149 100 154 Q77 149 70 116Z" fill="${c}" opacity=".48"/>`,
+ short:`<path d="M68 114 Q70 151 85 163 Q100 174 115 163 Q130 151 132 114 Q125 145 116 154 L100 164 L84 154 Q75 145 68 114Z" fill="${c}"/>`,
+ full:`<path d="M66 108 Q67 151 82 169 L100 183 L118 169 Q133 151 134 108 Q128 145 117 158 L100 174 L83 158 Q72 145 66 108Z" fill="${c}"/>`,
+ goatee:`<path d="M91 137 Q100 143 109 137 L108 158 L100 168 L92 158Z" fill="${c}"/><path d="M86 128 Q100 121 114 128 Q104 132 100 132 Q96 132 86 128Z" fill="${c}"/>`,
+ mustache:`<path d="M82 126 Q91 118 100 125 Q109 118 118 126 Q110 132 100 129 Q90 132 82 126Z" fill="${c}"/>`,
+ mustacheStubble:`<path d="M70 116 Q75 155 100 160 Q125 155 130 116 Q123 149 100 154 Q77 149 70 116Z" fill="${c}" opacity=".35"/><path d="M82 126 Q91 118 100 125 Q109 118 118 126 Q110 132 100 129 Q90 132 82 126Z" fill="${c}"/>`
+ }; return parts[type]||"";
+}
+function hairSVG(c,cut){
+ if(cut.includes("buzz")||cut.includes("fade")) return `<path d="M59 86 Q62 44 100 42 Q138 44 141 86 Q125 59 100 57 Q75 59 59 86Z" fill="${c}"/>`;
+ if(cut.includes("Shoulder")||cut.includes("Long")) return `<path d="M52 95 Q47 40 100 31 Q153 40 148 95 L145 150 L130 136 L134 82 Q118 50 100 52 Q82 50 66 82 L70 136 L55 150Z" fill="${c}"/>`;
+ if(cut.includes("Man-bun")) return `<circle cx="100" cy="33" r="18" fill="${c}"/><path d="M54 91 Q53 38 100 38 Q147 38 146 91 Q128 55 100 55 Q72 55 54 91Z" fill="${c}"/>`;
+ return `<path d="M53 91 Q50 35 100 36 Q150 35 147 91 Q131 54 103 56 Q77 49 60 82Z" fill="${c}"/><path d="M58 57 Q83 21 130 42 Q107 43 82 70Z" fill="${c}"/>`;
+}
+function makeSVG(p){
+ const shirt="#111319", hc=p.hair[1];
+ return `<svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+ <path d="M5 250 L25 172 Q45 157 82 157 L118 157 Q155 157 175 172 L195 250Z" fill="${shirt}"/>
+ <path d="M82 142 L82 169 Q100 182 118 169 L118 142Z" fill="${p.skin[1]}"/>
+ <path d="M65 70 L135 70 L134 119 Q130 143 114 157 L86 157 Q70 143 66 119Z" fill="${p.skin[1]}"/>
+ <circle cx="65" cy="111" r="8" fill="${p.skin[1]}"/><circle cx="135" cy="111" r="8" fill="${p.skin[1]}"/>
+ <path d="M78 104 Q86 98 94 104" stroke="#292929" stroke-width="2" fill="none"/><path d="M106 104 Q114 98 122 104" stroke="#292929" stroke-width="2" fill="none"/>
+ <circle cx="86" cy="108" r="2.5" fill="#202020"/><circle cx="114" cy="108" r="2.5" fill="#202020"/>
+ <path d="M100 109 L96 126 Q100 129 104 126" stroke="#9c684f" stroke-width="2" fill="none"/>
+ <path d="M90 137 Q100 142 110 137" stroke="#8c514b" stroke-width="2" fill="none"/>
+ ${beardSVG(p.facialHair.type,hc)} ${hairSVG(hc,p.haircut)}
+ </svg>`;
+}
+function build(){
+ let h1=r(data.hobbies),h2=r(data.hobbies);while(h1===h2)h2=r(data.hobbies);
+ let pool=[...data.perks], perks=[]; for(let i=0;i<range(1,4);i++) perks.push(pool.splice(range(0,pool.length-1),1)[0]);
+ const p={name:r(data.names),age:range(25,50),quote:r(data.quotes),origin:r(data.origins),distance:range(1,42),
+ meet:r(data.meetLocations),hair:r(data.hairColors),haircut:r(data.haircuts),skin:r(data.skinTones),height:r(data.heights),
+ muscle:r(data.muscularity),belly:r(data.bellies),neckline:r(data.necklines),style:r(data.styles),facialHair:r(data.facialHair),
+ toolLength:r(data.toolLengths),toolGirth:r(data.toolGirths),cream:r(data.creams),frosting:r(data.frosting),direction:r(data.directions),
+ h1,h2,occupation:r(data.occupations),hangout:r(data.hangouts),stamina:r(data.staminas),performances:range(1,8),
+ behavior:r(data.behaviors),perks}; p.svg=makeSVG(p); return p;
+}
+function render(p){
+ current=p;
+ document.getElementById("name").textContent=p.name; document.getElementById("age").textContent=p.age;
+ document.getElementById("quote").textContent=p.quote; document.getElementById("origin").textContent=p.origin;
+ document.getElementById("distance").textContent=p.distance;
+ document.getElementById("avatar").insertAdjacentHTML("afterbegin",p.svg);
+ const av=document.getElementById("avatar"); [...av.querySelectorAll(":scope > svg")].slice(0,-1).forEach(x=>x.remove());
+ document.getElementById("chips").innerHTML=`<span class="chip">💼 ${p.occupation}</span><span class="chip">📏 ${p.height}</span><span class="chip">🎯 ${p.h1}</span><span class="chip">🎯 ${p.h2}</span>`;
+ document.getElementById("vibe").innerHTML=`<strong>${p.behavior}.</strong> Usually found at ${p.hangout.toLowerCase()}. You will probably meet him ${p.meet}.`;
+ document.getElementById("physical").innerHTML=`${p.skin[0]} skin, ${p.hair[0].toLowerCase()} ${p.haircut.toLowerCase()}, and <strong>${p.facialHair.name.toLowerCase()}</strong>. ${p.muscle} with a ${p.belly.toLowerCase()}.<br><strong>Standout perks:</strong> ${p.perks.join(", ")}.`;
+ document.getElementById("scene").innerHTML=`<strong>Stamina:</strong> ${p.stamina}<br><strong>Performances per night:</strong> ${p.performances}<br><strong>Favorite direction:</strong> ${p.direction}<br><strong>Cream preference:</strong> ${p.cream} (${p.frosting})`;
+ document.getElementById("tool").innerHTML=`Carries a <strong>${p.toolLength} ${p.toolGirth.toLowerCase()}</strong> lucky screwdriver.`;
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function generateProfile(){render(build())}
+function saveProfile(){
+ const list=document.getElementById("match-list"),sec=document.getElementById("matches");
+ const el=document.createElement("div");el.className="match";
+ el.innerHTML=`<div class="match-avatar">${current.svg}</div><div class="match-copy"><b>${current.name}, ${current.age}</b><small>${current.occupation}</small></div>`;
+ list.prepend(el);sec.style.display="block"; const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1300);
+}
+window.addEventListener("DOMContentLoaded",generateProfile);
+</script>
+</body>
+</html>
